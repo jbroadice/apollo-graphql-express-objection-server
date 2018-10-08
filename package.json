@@ -1,0 +1,34 @@
+{
+  "name": "apollo-graphql-express-objection-server",
+  "version": "1.0.0",
+  "description": "A GraphQL (Apollo) Express server with JWT authentication, and using Objection.js ORM that automagically generates GQL schema types & resolvers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "./node_modules/.bin/nodemon src/server.js"
+  },
+  "author": "Jack Chapple",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server-express": "^2.1.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "graphql": "^14.0.2",
+    "jsonwebtoken": "^8.3.0",
+    "knex": "^0.14.6",
+    "lodash": "^4.17.11",
+    "mysql": "^2.16.0",
+    "objection": "^1.1.10",
+    "objection-graphql": "^0.4.2"
+  },
+  "devDependencies": {
+    "eslint": "^4.16.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "jest": "^23.1.0",
+    "nodemon": "^1.18.4"
+  }
+}

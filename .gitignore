@@ -1,0 +1,5 @@
+.env
+node_modules
+yarn-error.log
+public.key
+private.key
