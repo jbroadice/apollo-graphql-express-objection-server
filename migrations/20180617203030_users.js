@@ -6,7 +6,7 @@ exports.up = async (knex) => {
     table.string('firstName');
     table.string('lastName');
     table.string('password');
-    table.dateTime('createdAt').defaultTo(knex.fn.now(6));
+    table.timestamp('createdAt').defaultTo(knex.fn.now(6));
   });
   await knex.schema.createTable('Project', (table) => {
     table.increments('id').primary();
