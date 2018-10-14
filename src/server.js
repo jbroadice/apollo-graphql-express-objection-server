@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const cors = require('cors');
@@ -20,6 +21,8 @@ app.use(removeXPoweredBy());
 app.use(cors());
 
 app.use(json());
+
+app.use(express.static(path.resolve(__dirname, '../static')));
 
 app.use('/signin', async (req, res) => {
   if (req.method !== 'POST') {
