@@ -8,10 +8,19 @@ const withAuth = require('./http-middleware/withAuth');
 const schema = require('./schema');
 const getTokenFromLogin = require('./utils/getTokenFromLogin');
 
+const { NODE_ENV, APOLLO_ENGINE_KEY } = process.env;
+
+const isDev = NODE_ENV !== 'production';
+
 const server = new ApolloServer({
   schema,
+  introspection: isDev,
+  playground: isDev,
   cors: false,
   bodyParserConfig: false,
+  engine: {
+    apiKey: APOLLO_ENGINE_KEY,
+  },
 });
 
 const app = express();

@@ -7,18 +7,28 @@ const {
   DB_DATABASE,
 } = process.env;
 
+const defaults = {
+  client: 'mysql',
+  connection: {
+    host: DB_HOST,
+    user: DB_USER,
+    password: DB_PASSWORD,
+    database: DB_DATABASE,
+  },
+};
+
 module.exports = {
 
   development: {
-    client: 'mysql',
+    ...defaults,
     debug: true,
     useNullAsDefault: true,
-    connection: {
-      host: DB_HOST,
-      user: DB_USER,
-      password: DB_PASSWORD,
-      database: DB_DATABASE,
-    },
+  },
+
+  production: {
+    ...defaults,
+    debug: false,
+    useNullAsDefault: true,
   },
 
 };

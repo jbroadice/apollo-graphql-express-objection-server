@@ -2,10 +2,11 @@
   "name": "apollo-graphql-express-objection-server",
   "version": "1.0.0",
   "description": "A GraphQL (Apollo) Express server with JWT authentication, and using Objection.js ORM that automagically generates GQL schema types & resolvers.",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
     "test": "jest",
-    "start": "./node_modules/.bin/nodemon src/server.js"
+    "dev": "./node_modules/.bin/nodemon --inspect src/server.js",
+    "start": "NODE_ENV=production node src/server.js"
   },
   "author": "Jack Chapple",
   "license": "ISC",
