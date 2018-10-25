@@ -1,57 +1,33 @@
-const path = require('path');
-const express = require('express');
-const { ApolloServer } = require('apollo-server-express');
-const cors = require('cors');
-const { json } = require('body-parser');
-const removeXPoweredBy = require('./http-middleware/removeXPoweredBy');
-const withAuth = require('./http-middleware/withAuth');
-const schema = require('./schema');
-const getTokenFromLogin = require('./utils/getTokenFromLogin');
+const db = require('./db');
+const app = require('./app')({ db });
 
-const { NODE_ENV, APOLLO_ENGINE_KEY } = process.env;
+const port = process.env.PORT || 4000;
+const host = process.env.HOSTNAME || '0.0.0.0';
 
-const isDev = NODE_ENV !== 'production';
-
-const server = new ApolloServer({
-  schema,
-  introspection: isDev,
-  playground: isDev,
-  cors: false,
-  bodyParserConfig: false,
-  engine: {
-    apiKey: APOLLO_ENGINE_KEY,
-  },
+// Launch Node.js server
+const server = app.listen({ port, host }, () => {
+  console.log(`🚀 Server ready at http://${host}:${port}/`);
 });
 
-const app = express();
-
-app.use(removeXPoweredBy());
-
-app.use(cors());
-
-app.use(json());
-
-app.use(express.static(path.resolve(__dirname, '../static')));
-
-app.use('/signin', async (req, res) => {
-  if (req.method !== 'POST') {
-    res.status(405).send('Method Not Allowed');
-    return;
+// Shutdown Node.js app gracefully
+function handleExit(options, err) {
+  if (options.cleanup) {
+    const actions = [server.close, db.destroy];
+    actions.forEach((close, i) => {
+      try {
+        close(() => {
+          if (i === actions.length - 1) process.exit();
+        });
+      } catch (err) {
+        if (i === actions.length - 1) process.exit();
+      }
+    });
   }
+  if (err) console.error(err);
+  if (options.exit) process.exit();
+}
 
-  const token = await getTokenFromLogin(req.body);
-
-  if (!token) {
-    res.status(401);
-  }
-
-  res.send({ token });
-});
-
-app.use(server.graphqlPath, withAuth(server));
-
-server.applyMiddleware({ app });
-
-app.listen({ port: 4000 }, () => {
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
-});
+process.on('exit', handleExit.bind(null, { cleanup: true }));
+process.on('SIGINT', handleExit.bind(null, { exit: true }));
+process.on('SIGTERM', handleExit.bind(null, { exit: true }));
+process.on('uncaughtException', handleExit.bind(null, { exit: true }));

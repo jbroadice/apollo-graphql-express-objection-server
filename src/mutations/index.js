@@ -1,11 +1,12 @@
 /* eslint-disable global-require */
-
 const mutations = {
   User: require('./User'),
 };
 
-module.exports = (builder) => {
+const createMutations = (builder) => {
   Object.keys(mutations).forEach((name) => {
     builder.extendWithMutations(mutations[name]);
   });
 };
+
+module.exports = createMutations;

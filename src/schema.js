@@ -1,14 +1,18 @@
 const { Model } = require('objection');
 const objectionGraphql = require('objection-graphql');
-const knex = require('./knex');
 const models = require('./models');
+const createMutations = require('./mutations');
 
-Model.knex(knex);
+const createSchema = (db) => {
+  Model.knex(db);
 
-const builder = objectionGraphql
-  .builder()
-  .allModels(Object.values(models));
+  const builder = objectionGraphql
+    .builder()
+    .allModels(Object.values(models));
 
-require('./mutations')(builder);
+  createMutations(builder);
 
-module.exports = builder.build();
+  return builder.build();
+};
+
+module.exports = createSchema;
