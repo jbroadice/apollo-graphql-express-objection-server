@@ -84,44 +84,35 @@ const signinUserInputType = new GraphQLInputObjectType({
   }),
 });
 
-const mutationType = new GraphQLObjectType({
-  name: 'RootMutationType',
-  description: 'Domain API actions',
+const createUser = {
+  description: 'Creates a new user',
+  type: userType,
+  args: {
+    input: { type: new GraphQLNonNull(createUserInputType) },
+  },
+  resolve: async (root, { input }) => {
+    const hash = await bcrypt.hash(input.password, 8);
+    const graph = await User.query().insertGraph({
+      ...input,
+      password: hash,
+    });
+    return graph.toJSON();
+  },
+};
 
-  fields: () => ({
+const signinUser = {
+  description: 'Sign in a user',
+  type: authResponseType,
+  args: {
+    input: { type: new GraphQLNonNull(signinUserInputType) },
+  },
+  resolve: async (root, { input }) => {
+    const token = await getTokenFromLogin(input);
+    if (!token) {
+      throw new AuthenticationError('Invalid credentials.');
+    }
+    return { token };
+  },
+};
 
-    createUser: {
-      description: 'Creates a new user',
-      type: userType,
-      args: {
-        input: { type: new GraphQLNonNull(createUserInputType) },
-      },
-      resolve: async (root, { input }) => {
-        const hash = await bcrypt.hash(input.password, 8);
-        const graph = await User.query().insertGraph({
-          ...input,
-          password: hash,
-        });
-        return graph.toJSON();
-      },
-    },
-
-    signinUser: {
-      description: 'Sign in a user',
-      type: authResponseType,
-      args: {
-        input: { type: new GraphQLNonNull(signinUserInputType) },
-      },
-      resolve: async (root, { input }) => {
-        const token = await getTokenFromLogin(input);
-        if (!token) {
-          throw new AuthenticationError('Invalid credentials.');
-        }
-        return { token };
-      },
-    },
-
-  }),
-});
-
-module.exports = mutationType;
+module.exports = { createUser, signinUser };
