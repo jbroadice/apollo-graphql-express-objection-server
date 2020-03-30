@@ -1,12 +1,15 @@
 /* eslint-disable global-require */
-const mutations = {
-  User: require('./User'),
-};
+const mutationType = new GraphQLObjectType({
+  name: 'RootMutationType',
+  description: 'Domain API actions',
+
+  fields: () => ({
+    ...require('./User'),
+  }),
+});
 
 const createMutations = (builder) => {
-  Object.keys(mutations).forEach((name) => {
-    builder.extendWithMutations(mutations[name]);
-  });
+  builder.extendWithMutations(mutationType);
 };
 
 module.exports = createMutations;
